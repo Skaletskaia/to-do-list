@@ -1,6 +1,6 @@
 import React, { FC, FormEvent, ChangeEvent } from "react";
 import "./NewForm.css";
-import { addTask } from "../../api";
+import { addTask, updTask } from "../../api";
 import { IList } from "../../types";
 import { updDate } from "../../utils";
 
@@ -8,12 +8,14 @@ export interface INewForm {
   setTaskForm: (value: React.SetStateAction<boolean>) => void;
   setUpdList: (value: React.SetStateAction<boolean>) => void;
   dataTask: IList;
+  taskId: string;
 }
 
 export const NewForm: FC<INewForm> = ({
   setTaskForm,
   setUpdList,
   dataTask,
+  taskId,
 }) => {
   const closeTaskForm = () => {
     setTaskForm(false);
@@ -58,16 +60,21 @@ export const NewForm: FC<INewForm> = ({
       return;
     }
 
-    console.log("мы отправили данные", inputValues);
+    //проверки прошли
 
-    // если все ок - отправляем данные
+    // если есть ID, то обновлеям данные
+    if (taskId) {
+      await updTask(taskId, inputValues);
+      setTaskForm(false);
+      setUpdList((value) => !value);
+      return;
+    }
+
+    // иначе создаем новую задачу
     await addTask(inputValues);
-    setUpdList((value) => !value);
     setTaskForm(false);
+    setUpdList((value) => !value);
   };
-
-  // console.log(dataTask.date);
-  // console.log(updDate(dataTask.date.seconds, dataTask.date.nanoseconds));
 
   return (
     <React.Fragment>
@@ -99,7 +106,6 @@ export const NewForm: FC<INewForm> = ({
                 name="date"
                 className="input-date"
                 onChange={onChangeInput}
-                // изменить дату
                 value={inputValues.date}
               />
             </label>

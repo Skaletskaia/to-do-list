@@ -7,6 +7,7 @@ import {
   doc,
   deleteDoc,
   getDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 import { IList } from "types";
@@ -46,6 +47,7 @@ export const addTask = async (data: { task: string; date: string }) => {
     const newDate = updDateFirestore(data.date);
 
     console.log("новая дата", newDate);
+    console.log("создание новой задачи");
 
     const docRef = await addDoc(collection(db, myCollection), {
       task: data.task,
@@ -81,6 +83,24 @@ export const getTask = async (id: string): Promise<IList | undefined> => {
       console.log("No such document!");
       return undefined;
     }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const updTask = async (
+  id: string,
+  data: { task: string; date: string },
+) => {
+  try {
+    const washingtonRef = doc(db, myCollection, id);
+
+    await updateDoc(washingtonRef, {
+      task: data.task,
+      date: updDateFirestore(data.date),
+    });
+
+    console.log("обновили данные задачи");
   } catch (error) {
     console.error(error);
   }

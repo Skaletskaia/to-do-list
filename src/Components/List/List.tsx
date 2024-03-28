@@ -18,6 +18,7 @@ export const List = () => {
       seconds: 0,
     },
   });
+  const [taskId, setTaskId] = React.useState<string>(""); // ID выбранной задачи
 
   React.useEffect(() => {
     console.log("обновляем список");
@@ -40,6 +41,7 @@ export const List = () => {
         seconds: 0,
       },
     });
+    setTaskId("");
   };
 
   const removeTask = async (id: string) => {
@@ -49,6 +51,7 @@ export const List = () => {
 
   const editTask = async (id: string) => {
     console.log("редактируем элемент");
+    setTaskId(id);
     await getTask(id).then((data) => {
       console.log(data);
       if (data) {
@@ -132,6 +135,7 @@ export const List = () => {
           setTaskForm={setTaskForm}
           setUpdList={setUpdList}
           dataTask={dataTask}
+          taskId={taskId}
         />
       ) : null}
     </React.Fragment>
