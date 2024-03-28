@@ -1,6 +1,77 @@
 body {
   font-family: "Rubik", sans-serif;
-  background-color: #ebebeb;
-  font-size: 22px;
+  background: -webkit-linear-gradient(
+    90deg,
+    rgb(146, 156, 234),
+    rgb(168, 146, 234)
+  );
+  background: -moz-linear-gradient(
+    90deg,
+    rgb(146, 156, 234),
+    rgb(168, 146, 234)
+  );
+  background: linear-gradient(90deg, rgb(146, 156, 234), rgb(168, 146, 234));
+  font-size: 18px;
   font-weight: 400;
+}
+
+.btn {
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 1rem;
+  text-transform: capitalize;
+  background-color: white;
+  cursor: pointer;
+}
+
+.btn-add {
+  background-color: #ff5945;
+  color: white;
+  max-height: 45px;
+  padding: 11px;
+}
+
+.btn-cancel {
+  border: 1px solid rgb(146, 156, 234);
+  color: #b8bacd;
+}
+
+.input-task {
+  border: none;
+  width: 580px;
+  height: 30px;
+  font-size: 17px;
+}
+
+.textarea-task {
+  border: none;
+  width: 580px;
+  height: 60px;
+  font-size: 17px;
+  resize: none;
+}
+
+.input-task::placeholder {
+  color: #b8bacd;
+}
+
+.input-date {
+  border: none;
+  font-size: 14px;
+  height: 30px;
+  margin-top: 5px;
+}
+
+.input-date:focus {
+  outline: none;
+}
+
+.error {
+  border-bottom: solid 1.5px red;
+}
+
+.span-error {
+  font-size: 12px;
+  color: red;
 }

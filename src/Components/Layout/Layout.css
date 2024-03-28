@@ -1,0 +1,16 @@
+.container {
+  width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.header {
+  padding-top: 40px;
+  margin-bottom: 40px;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: right;
+  gap: 20px;
+}
