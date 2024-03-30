@@ -1,17 +1,18 @@
 import React, { FC, FormEvent, ChangeEvent } from "react";
-import "./NewForm.css";
+import "./TaskForm.css";
 import { addTask, updTask } from "../../api";
 import { IList } from "../../types";
 import { updDate } from "../../utils";
+import { useAuthContext } from "../../auth/AuthContextProvider";
 
-export interface INewForm {
+export interface ITaskForm {
   setTaskForm: (value: React.SetStateAction<boolean>) => void;
   setUpdList: (value: React.SetStateAction<boolean>) => void;
   dataTask: IList;
   taskId: string;
 }
 
-export const NewForm: FC<INewForm> = ({
+export const TaskForm: FC<ITaskForm> = ({
   setTaskForm,
   setUpdList,
   dataTask,
@@ -23,18 +24,24 @@ export const NewForm: FC<INewForm> = ({
   const [inputValues, setInputValues] = React.useState<{
     task: string;
     date: string;
+    userID: string;
   }>({
     task: "",
     date: "",
+    userID: "",
   });
   const [taskError, setTaskError] = React.useState<boolean>(false);
+  const { user } = useAuthContext();
 
   React.useEffect(() => {
-    setInputValues({
-      task: dataTask.task,
-      date: updDate(dataTask.date.seconds, dataTask.date.nanoseconds),
-    });
-  }, [dataTask]);
+    if (user) {
+      setInputValues({
+        task: dataTask.task,
+        date: updDate(dataTask.date.seconds, dataTask.date.nanoseconds),
+        userID: user.uid,
+      });
+    }
+  }, [dataTask, user]);
 
   // на каждое изменение инпута, перезаписываем inputValues
   const onChangeInput = (
@@ -70,6 +77,8 @@ export const NewForm: FC<INewForm> = ({
       return;
     }
 
+    console.log(inputValues, "create new task with data:");
+
     // иначе создаем новую задачу
     await addTask(inputValues);
     setTaskForm(false);
@@ -92,7 +101,7 @@ export const NewForm: FC<INewForm> = ({
             {taskError ? (
               <React.Fragment>
                 <br />
-                <span className="span-error">
+                <span className="error-message">
                   Это поле является обязательным
                 </span>
               </React.Fragment>

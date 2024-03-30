@@ -71,7 +71,7 @@ body {
   border-bottom: solid 1.5px red;
 }
 
-.span-error {
+.error-message {
   font-size: 12px;
   color: red;
 }

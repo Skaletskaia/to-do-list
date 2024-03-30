@@ -1,15 +1,18 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import "./Layout.css";
+import { useAuthContext } from "../../auth/AuthContextProvider";
 
 export const Layout = () => {
+  const { logOut } = useAuthContext();
   return (
     <React.Fragment>
       <div className="container">
         <header className="header">
           <div className="btn-container">
-            <button className="btn">авторизация</button>
-            <button className="btn">выйти</button>
+            <button onClick={() => logOut()} className="btn">
+              выйти
+            </button>
           </div>
         </header>
         <Outlet />

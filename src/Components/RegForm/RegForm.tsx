@@ -1,15 +1,12 @@
 import React, { FC } from "react";
-import "./LoginForm.css";
-import { useNavigate } from "react-router-dom";
+import "./RegForm.css";
 
-export interface TLoginForm {
+export interface TRegForm {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onChangeInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const LoginForm: FC<TLoginForm> = ({ onSubmit, onChangeInput }) => {
-  const navigate = useNavigate();
-
+export const RegForm: FC<TRegForm> = ({ onSubmit, onChangeInput }) => {
   return (
     <React.Fragment>
       <div className="login-form">
@@ -23,26 +20,30 @@ export const LoginForm: FC<TLoginForm> = ({ onSubmit, onChangeInput }) => {
                 placeholder="Email"
                 onChange={onChangeInput}
               />
+              {/* <span className="error-message">{getErrorMessage("email")}</span> */}
             </label>
             <label>
               <input
                 type="text"
                 name="password"
                 className="log-input  login-form__input-password"
-                placeholder="Password"
+                placeholder="Придумайте пароль"
+                onChange={onChangeInput}
+              />
+            </label>
+            <label>
+              <input
+                type="text"
+                name="passwordRepeat"
+                className="log-input  login-form__input-password"
+                placeholder="Повторите пароль"
                 onChange={onChangeInput}
               />
             </label>
           </div>
           <div className="login-form__btns">
-            <button type="submit" className="btn btn-add btn-log">
-              войти
-            </button>
-            <button
-              onClick={() => navigate("/reg")}
-              className="btn btn-add btn-log"
-            >
-              регистрация
+            <button type="submit" className="btn btn-add">
+              Зарегистрироваться
             </button>
           </div>
         </form>

@@ -3,11 +3,12 @@ import "./List.css";
 import { getList, deleteTask, getTask } from "../../api";
 import { updDate } from "../../utils";
 import { IList } from "../../types";
-import { NewForm } from "../NewForm/NewForm";
+import { TaskForm } from "../TaskForm/TaskForm";
+import { useAuthContext } from "../../auth/AuthContextProvider";
 
 export const List = () => {
   const [dataList, setDataList] = React.useState<IList[]>([]); // список со всеми задачами
-  const [taskForm, setTaskForm] = React.useState<boolean>(false); // отображение формы для новой задачи
+  const [taskForm, setTaskForm] = React.useState<boolean>(false); // отображение формы задачи
   const [updList, setUpdList] = React.useState(false);
   const [dataTask, setDataTask] = React.useState<IList>({
     id: "",
@@ -19,19 +20,24 @@ export const List = () => {
     },
   });
   const [taskId, setTaskId] = React.useState<string>(""); // ID выбранной задачи
+  const { user } = useAuthContext();
 
   React.useEffect(() => {
     console.log("обновляем список");
-    getList().then((data: IList[] | undefined) => {
-      if (data) {
-        setDataList(data);
-      }
-    });
+    console.log(user);
+    if (user) {
+      getList(user.uid).then((data: IList[] | undefined) => {
+        if (data) {
+          setDataList(data);
+        }
+      });
+    }
   }, [updList]);
 
   const showTaskForm = () => {
     setTaskForm(true);
     // сбрасываю значения полей задачи
+
     setDataTask({
       id: "",
       task: "",
@@ -131,7 +137,7 @@ export const List = () => {
         )}
       </div>
       {taskForm ? (
-        <NewForm
+        <TaskForm
           setTaskForm={setTaskForm}
           setUpdList={setUpdList}
           dataTask={dataTask}
