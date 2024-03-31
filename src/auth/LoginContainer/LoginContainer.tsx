@@ -10,10 +10,18 @@ export const LoginContainer = () => {
   });
   const { loginWithEmailAndPassword, isAuthenticated } = useAuthContext();
   const navigate = useNavigate();
+  const [errorsInput, setErrorsInput] = React.useState<{
+    email: string[];
+    password: string[];
+    backErrors: string[];
+  }>({
+    email: [],
+    password: [],
+    backErrors: [],
+  });
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      console.log("Authenticated, redirecting...");
       navigate("/");
     }
   }, [isAuthenticated, navigate]);
@@ -25,20 +33,59 @@ export const LoginContainer = () => {
     setLogData({ ...logData, [name]: value });
   };
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // добавить проверки
-    //
-    //
+    let formIsValid = true;
+    const newErrors: {
+      email: string[];
+      password: string[];
+      backErrors: string[];
+    } = {
+      email: [],
+      password: [],
+      backErrors: [],
+    };
 
-    console.log(logData);
+    // email является обязательным
+    if (logData.email === "") {
+      newErrors.email.push("Это поле является обязательным");
+      formIsValid = false;
+    }
 
-    loginWithEmailAndPassword(logData.email, logData.password);
+    // password является обязательным
+    if (logData.password === "") {
+      newErrors.password.push("Это поле является обязательным");
+      formIsValid = false;
+    }
+
+    setErrorsInput((prevState) => ({
+      ...prevState,
+      ...newErrors,
+    }));
+
+    if (formIsValid) {
+      try {
+        await loginWithEmailAndPassword(logData.email, logData.password);
+      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const message = (error as any).message as string;
+
+        setErrorsInput((prevState) => ({
+          ...prevState,
+          backErrors: [message],
+        }));
+      }
+    }
   };
+
   return (
     <React.Fragment>
-      <LoginForm onSubmit={onSubmit} onChangeInput={onChangeInput} />
+      <LoginForm
+        onSubmit={onSubmit}
+        onChangeInput={onChangeInput}
+        errorsInput={errorsInput}
+      />
     </React.Fragment>
   );
 };

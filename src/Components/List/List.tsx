@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 import "./List.css";
 import { getList, deleteTask, getTask } from "../../api";
 import { updDate } from "../../utils";
@@ -21,10 +21,9 @@ export const List = () => {
   });
   const [taskId, setTaskId] = React.useState<string>(""); // ID выбранной задачи
   const { user } = useAuthContext();
+  const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
 
   React.useEffect(() => {
-    console.log("обновляем список");
-    console.log(user);
     if (user) {
       getList(user.uid).then((data: IList[] | undefined) => {
         if (data) {
@@ -56,16 +55,38 @@ export const List = () => {
   };
 
   const editTask = async (id: string) => {
-    console.log("редактируем элемент");
     setTaskId(id);
     await getTask(id).then((data) => {
-      console.log(data);
       if (data) {
         setDataTask(data);
       }
     });
 
     setTaskForm(true);
+  };
+
+  // removeTimer
+  const removeTimer = () => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+  };
+
+  // задача выполнена - удаляем через 2 сек, если убрать галку - не удаляем
+  const doneTask = (event: ChangeEvent<HTMLInputElement>, idTask: string) => {
+    if (event.target.checked) {
+      event.target.value = "on";
+
+      setTimer(
+        setTimeout(() => {
+          removeTask(idTask);
+        }, 2000),
+      );
+    } else {
+      event.target.value = "off";
+
+      removeTimer();
+    }
   };
 
   return (
@@ -78,72 +99,79 @@ export const List = () => {
           </button>
         </div>
         <hr className="line" />
-        {dataList.length > 0 ? (
-          dataList.map((item: IList) => (
-            <div className="list__item" key={item.id}>
-              <form className="list__item-container">
-                <label>
-                  <input type="checkbox" name="done" />
-                </label>
-                <div className="list__item-info">
+
+        <div className="list__body">
+          {dataList.length > 0 ? (
+            dataList.map((item: IList) => (
+              <div className="list__item" key={item.id}>
+                <form className="list__item-container">
                   <label>
                     <input
-                      type="text"
-                      name="task"
-                      className="input-task"
-                      value={item.task}
-                      disabled
+                      type="checkbox"
+                      name="done"
+                      onChange={(e) => doneTask(e, item.id)}
                     />
                   </label>
-                  {isNaN(item.date.seconds) ||
-                  isNaN(item.date.nanoseconds) ? null : (
-                    <label className="label-date">
-                      <span className="span-date"> до</span>
+                  <div className="list__item-info">
+                    <label>
                       <input
-                        type="date"
-                        name="date"
-                        className="input-date"
-                        value={updDate(
-                          item.date.seconds,
-                          item.date.nanoseconds,
-                        )}
+                        type="text"
+                        name="task"
+                        className="input-task"
+                        value={item.task}
                         disabled
                       />
                     </label>
-                  )}
-                </div>
-                <div className="list__item-btns">
-                  <button
-                    type="button"
-                    className="btn-list"
-                    onClick={() => editTask(item.id)}
-                  >
-                    ✎
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-list"
-                    onClick={() => removeTask(item.id)}
-                  >
-                    x
-                  </button>
-                </div>
-              </form>
-              <hr className="line" />
-            </div>
-          ))
-        ) : (
-          <p>Нажми на кнопочку Добавить</p>
-        )}
+                    {isNaN(item.date.seconds) ||
+                    isNaN(item.date.nanoseconds) ? null : (
+                      <label className="label-date">
+                        <span className="span-date"> до</span>
+                        <input
+                          type="date"
+                          name="date"
+                          className="input-date"
+                          value={updDate(
+                            item.date.seconds,
+                            item.date.nanoseconds,
+                          )}
+                          disabled
+                        />
+                      </label>
+                    )}
+                  </div>
+                  <div className="list__item-btns">
+                    <button
+                      type="button"
+                      className="btn-list"
+                      onClick={() => editTask(item.id)}
+                    >
+                      ✎
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-list"
+                      onClick={() => removeTask(item.id)}
+                    >
+                      x
+                    </button>
+                  </div>
+                </form>
+                <hr className="line" />
+              </div>
+            ))
+          ) : (
+            <p>Нажми на кнопочку Добавить</p>
+          )}
+        </div>
+        {taskForm ? (
+          <TaskForm
+            setTaskForm={setTaskForm}
+            setUpdList={setUpdList}
+            dataTask={dataTask}
+            taskId={taskId}
+          />
+        ) : null}
       </div>
-      {taskForm ? (
-        <TaskForm
-          setTaskForm={setTaskForm}
-          setUpdList={setUpdList}
-          dataTask={dataTask}
-          taskId={taskId}
-        />
-      ) : null}
     </React.Fragment>
   );
 };

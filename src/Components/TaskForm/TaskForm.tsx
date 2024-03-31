@@ -2,7 +2,7 @@ import React, { FC, FormEvent, ChangeEvent } from "react";
 import "./TaskForm.css";
 import { addTask, updTask } from "../../api";
 import { IList } from "../../types";
-import { updDate } from "../../utils";
+import { updDate, currentDateCheck } from "../../utils";
 import { useAuthContext } from "../../auth/AuthContextProvider";
 
 export interface ITaskForm {
@@ -30,8 +30,15 @@ export const TaskForm: FC<ITaskForm> = ({
     date: "",
     userID: "",
   });
-  const [taskError, setTaskError] = React.useState<boolean>(false);
+  // const [taskError, setTaskError] = React.useState<boolean>(false);
   const { user } = useAuthContext();
+  const [errorsInput, setErrorsInput] = React.useState<{
+    task: string[];
+    date: string[];
+  }>({
+    task: [],
+    date: [],
+  });
 
   React.useEffect(() => {
     if (user) {
@@ -56,33 +63,50 @@ export const TaskForm: FC<ITaskForm> = ({
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    let formIsValid = true;
+    const newErrors: {
+      task: string[];
+      date: string[];
+    } = {
+      task: [],
+      date: [],
+    };
+
+    // поле является обязательным
     if (inputValues.task === "") {
-      const taskInput = event.currentTarget.elements[
-        "task"
-      ] as HTMLInputElement;
-
-      taskInput.classList.add("error"); // добавили красную обводку
-      setTaskError(true);
-
-      return;
+      newErrors.task.push("Это поле является обязательным");
+      formIsValid = false;
     }
+
+    // только пробелы
+    if (inputValues.task.trim().length === 0) {
+      newErrors.task.push("Нельзя отправлять только пробелы");
+      formIsValid = false;
+    }
+
+    // дата из прошлого
+    if (currentDateCheck(inputValues.date)) {
+      newErrors.date.push("Нельяза выбирать дату из прошлого");
+      formIsValid = false;
+    }
+
+    setErrorsInput(newErrors);
 
     //проверки прошли
+    if (formIsValid) {
+      // если есть ID, то обновлеям данные
+      if (taskId) {
+        await updTask(taskId, inputValues);
+        setTaskForm(false);
+        setUpdList((value) => !value);
+        return;
+      }
 
-    // если есть ID, то обновлеям данные
-    if (taskId) {
-      await updTask(taskId, inputValues);
+      // иначе создаем новую задачу
+      await addTask(inputValues);
       setTaskForm(false);
       setUpdList((value) => !value);
-      return;
     }
-
-    console.log(inputValues, "create new task with data:");
-
-    // иначе создаем новую задачу
-    await addTask(inputValues);
-    setTaskForm(false);
-    setUpdList((value) => !value);
   };
 
   return (
@@ -92,18 +116,16 @@ export const TaskForm: FC<ITaskForm> = ({
           <label>
             <textarea
               name="task"
-              className="textarea-task"
+              className="textarea-task input-task-line"
               placeholder="Напиши свою задачу"
               onChange={onChangeInput}
               value={inputValues.task}
             />
 
-            {taskError ? (
+            {errorsInput.task ? (
               <React.Fragment>
                 <br />
-                <span className="error-message">
-                  Это поле является обязательным
-                </span>
+                <span className="error-message">{errorsInput.task[0]}</span>
               </React.Fragment>
             ) : null}
           </label>
@@ -117,6 +139,13 @@ export const TaskForm: FC<ITaskForm> = ({
                 onChange={onChangeInput}
                 value={inputValues.date}
               />
+
+              {errorsInput.date ? (
+                <React.Fragment>
+                  <br />
+                  <span className="error-message">{errorsInput.date[0]}</span>
+                </React.Fragment>
+              ) : null}
             </label>
 
             <div className="form-container__btns">

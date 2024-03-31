@@ -68,7 +68,6 @@ export const AuthContextProvider: FC<AuthContextProviderProps> = ({
 
   const loginWithEmailAndPassword = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
-    console.log(isAuthenticated);
   };
 
   const logOut = async () => {
@@ -89,43 +88,3 @@ export const AuthContextProvider: FC<AuthContextProviderProps> = ({
     </AuthContext.Provider>
   );
 };
-
-// export const createUser = async (email: string, password: string) => {
-//   const auth = getAuth();
-//   try {
-//     const userCredential = await createUserWithEmailAndPassword(
-//       auth,
-//       email,
-//       password,
-//     );
-//     return userCredential.user;
-//   } catch (error) {
-//     throw new Error(error.message);
-//   }
-// };
-
-// авторизация по Email и Password
-// const loginWithEmailAndPassword = async (email: string, password: string) => {
-
-//   try {
-//     const userCredential = await signInWithEmailAndPassword(
-//       auth,
-//       email,
-//       password,
-//     );
-//     setUser(userCredential.user);
-
-//     console.log("авторизовались ", user);
-//   } catch (error) {
-//     throw new Error(error.message);
-//   }
-// };
-
-// // логин пользователя после авторизации
-// const loginRegUser = (): Promise<void> => {
-//   return new Promise((resolve) => {
-//     // setUser(credUser);
-//     console.log("User logged in, resolving promise");
-//     resolve(); // Correctly resolving the promise
-//   });
-// };

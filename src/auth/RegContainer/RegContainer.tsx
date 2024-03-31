@@ -3,20 +3,26 @@ import { RegForm } from "../../Components/RegForm/RegForm";
 import { useAuthContext } from "../../auth/AuthContextProvider";
 import { useNavigate } from "react-router-dom";
 
-export interface TError {
-  nameInput: string;
-  error: string;
-}
-
 export const RegContainer = () => {
   const [regData, setRegData] = React.useState({
     email: "",
     password: "",
     passwordRepeat: "",
   });
-  const [errorList, setErrorList] = React.useState<TError[]>([]);
+
   const { isAuthenticated, createUser } = useAuthContext(); // нужно функцию передать
   const navigate = useNavigate();
+  const [errorsInput, setErrorsInput] = React.useState<{
+    email: string[];
+    password: string[];
+    passwordRepeat: string[];
+    backErrors: string[];
+  }>({
+    email: [],
+    password: [],
+    passwordRepeat: [],
+    backErrors: [],
+  });
 
   const onChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
     const name = event.target.name;
@@ -27,7 +33,6 @@ export const RegContainer = () => {
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      console.log("Authenticated, redirecting...");
       navigate("/");
     }
   }, [isAuthenticated, navigate]);
@@ -35,38 +40,70 @@ export const RegContainer = () => {
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // проверка - пароль дважды написан верно
-    if (regData.password !== regData.passwordRepeat) {
-      console.log("разные парли");
-      setErrorList((prevErList) => [
-        ...prevErList,
-        {
-          nameInput: "passwordRepeat",
-          error: "Вы ввели разные пароли",
-        },
-      ]);
+    let formIsValid = true;
+    const newErrors: {
+      email: string[];
+      password: string[];
+      backErrors: string[];
+      passwordRepeat: string[];
+    } = {
+      email: [],
+      password: [],
+      backErrors: [],
+      passwordRepeat: [],
+    };
 
-      return;
+    // email является обязательным
+    if (regData.email === "") {
+      newErrors.email.push("Это поле является обязательным");
+      formIsValid = false;
     }
 
-    console.log(regData);
+    // password является обязательным
+    if (regData.password === "") {
+      newErrors.password.push("Это поле является обязательным");
+      formIsValid = false;
+    }
 
-    // если все ок - создаем пользователя и получаем его -- дальше надо будет по его данным авторизоваться и данные отобразить
-    try {
-      await createUser(regData.email, regData.password);
+    // password является обязательным
+    if (regData.passwordRepeat === "") {
+      newErrors.passwordRepeat.push("Это поле является обязательным");
+      formIsValid = false;
+    }
 
-      console.log("создали нового пользователя");
-    } catch (error) {
-      // выводить ошибку пользователю!!
+    // проверка - пароль дважды написан верно
+    if (regData.password !== regData.passwordRepeat) {
+      newErrors.passwordRepeat.push("Вы ввели разные пароли");
+      formIsValid = false;
+    }
 
-      console.log(error);
+    setErrorsInput(newErrors);
+
+    // если все ок - создаем пользователя
+    if (formIsValid) {
+      try {
+        await createUser(regData.email, regData.password);
+      } catch (error) {
+        // выводить ошибку пользователю!!
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const message = (error as any).message as string;
+
+        setErrorsInput((prevState) => ({
+          ...prevState,
+          backErrors: [...prevState.backErrors, message],
+        }));
+      }
     }
   };
 
-  console.log(errorList);
   return (
     <React.Fragment>
-      <RegForm onSubmit={onSubmit} onChangeInput={onChangeInput} />
+      <RegForm
+        onSubmit={onSubmit}
+        onChangeInput={onChangeInput}
+        errorsInput={errorsInput}
+      />
     </React.Fragment>
   );
 };

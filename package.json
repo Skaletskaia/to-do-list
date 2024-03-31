@@ -47,9 +47,9 @@
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
     "typescript-eslint": "^7.0.2"
-  }
-  // "pre-commit": [
-  //   "stylelint",
-  //   "eslint"
-  // ]
+  },
+  "pre-commit": [
+    "stylelint",
+    "eslint"
+  ]
 }

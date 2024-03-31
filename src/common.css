@@ -1,15 +1,5 @@
 body {
   font-family: "Rubik", sans-serif;
-  background: -webkit-linear-gradient(
-    90deg,
-    rgb(146, 156, 234),
-    rgb(168, 146, 234)
-  );
-  background: -moz-linear-gradient(
-    90deg,
-    rgb(146, 156, 234),
-    rgb(168, 146, 234)
-  );
   background: linear-gradient(90deg, rgb(146, 156, 234), rgb(168, 146, 234));
   font-size: 18px;
   font-weight: 400;

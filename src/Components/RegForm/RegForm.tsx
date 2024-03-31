@@ -4,9 +4,19 @@ import "./RegForm.css";
 export interface TRegForm {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onChangeInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  errorsInput: {
+    email: string[];
+    password: string[];
+    passwordRepeat: string[];
+    backErrors: string[];
+  };
 }
 
-export const RegForm: FC<TRegForm> = ({ onSubmit, onChangeInput }) => {
+export const RegForm: FC<TRegForm> = ({
+  onSubmit,
+  onChangeInput,
+  errorsInput,
+}) => {
   return (
     <React.Fragment>
       <div className="login-form">
@@ -14,32 +24,61 @@ export const RegForm: FC<TRegForm> = ({ onSubmit, onChangeInput }) => {
           <div className="login-form__inputs">
             <label>
               <input
-                type="text"
+                type="email"
                 name="email"
                 className="log-input login-form__input-name"
                 placeholder="Email"
                 onChange={onChangeInput}
               />
-              {/* <span className="error-message">{getErrorMessage("email")}</span> */}
+              {errorsInput.email ? (
+                <React.Fragment>
+                  <br />
+                  <span className="error-message">{errorsInput.email[0]}</span>
+                </React.Fragment>
+              ) : null}
             </label>
             <label>
               <input
-                type="text"
+                type="password"
                 name="password"
                 className="log-input  login-form__input-password"
                 placeholder="Придумайте пароль"
                 onChange={onChangeInput}
               />
+              {errorsInput.password ? (
+                <React.Fragment>
+                  <br />
+                  <span className="error-message">
+                    {errorsInput.password[0]}
+                  </span>
+                </React.Fragment>
+              ) : null}
             </label>
             <label>
               <input
-                type="text"
+                type="password"
                 name="passwordRepeat"
                 className="log-input  login-form__input-password"
                 placeholder="Повторите пароль"
                 onChange={onChangeInput}
               />
+              {errorsInput.passwordRepeat ? (
+                <React.Fragment>
+                  <br />
+                  <span className="error-message">
+                    {errorsInput.passwordRepeat[0]}
+                  </span>
+                </React.Fragment>
+              ) : null}
             </label>
+
+            {errorsInput.backErrors ? (
+              <React.Fragment>
+                <span className="error-message">
+                  {errorsInput.backErrors[0]}
+                </span>
+              </React.Fragment>
+            ) : null}
           </div>
           <div className="login-form__btns">
             <button type="submit" className="btn btn-add">

@@ -29,3 +29,14 @@ export const updDateFirestore = (dateString: string) => {
 
   return resultDate;
 };
+
+// проверка даты, если true - ошибка
+export const currentDateCheck = (date: string): boolean => {
+  const specificDate = new Date(date);
+  const currentDate = new Date();
+
+  specificDate.setHours(0, 0, 0, 0);
+  currentDate.setHours(0, 0, 0, 0);
+
+  return specificDate < currentDate;
+};
