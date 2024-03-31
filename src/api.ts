@@ -52,8 +52,7 @@ export const getList = async (userID: string): Promise<IList[]> => {
     });
     return dataList;
   } catch (error) {
-    console.error("Error getting documents: ", error);
-    throw new Error("Failed to fetch documents.");
+    return Promise.reject(error);
   }
 };
 
@@ -66,15 +65,13 @@ export const addTask = async (data: {
     const db = getFirestore();
     const newDate = updDateFirestore(data.date);
 
-    const docRef = await addDoc(collection(db, myCollection), {
+    await addDoc(collection(db, myCollection), {
       task: data.task,
       date: newDate,
       done: false,
       userID: data.userID,
     });
-    console.log("Document written with ID: ", docRef.id);
   } catch (error) {
-    console.error(error);
     throw new Error("Failed to add task");
   }
 };
@@ -84,7 +81,6 @@ export const deleteTask = async (id: string) => {
   try {
     await deleteDoc(doc(db, myCollection, id));
   } catch (error) {
-    console.error(error);
     throw new Error("Failed to remove task");
   }
 };
@@ -102,7 +98,7 @@ export const getTask = async (id: string): Promise<IList | undefined> => {
       return undefined;
     }
   } catch (error) {
-    console.error(error);
+    return Promise.reject(error);
   }
 };
 
@@ -120,6 +116,6 @@ export const updTask = async (
       date: updDateFirestore(data.date),
     });
   } catch (error) {
-    console.error(error);
+    return Promise.reject(error);
   }
 };
