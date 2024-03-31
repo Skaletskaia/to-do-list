@@ -22,9 +22,9 @@ export const RegForm: FC<TRegForm> = ({
 
   return (
     <React.Fragment>
-      <div className="login-form">
-        <form className="login-form__form" onSubmit={onSubmit}>
-          <div className="login-form__inputs">
+      <div className="reg-form">
+        <form className="reg-form__form" onSubmit={onSubmit}>
+          <div className="reg-form__inputs">
             <label>
               <input
                 type="email"

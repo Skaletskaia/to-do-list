@@ -1,20 +1,20 @@
-.login-form {
-  width: 32%;
-  height: 38vh;
+.reg-form {
+  width: 45%;
+  height: 50vh;
   margin: 0 auto;
   background-color: white;
   margin-top: 15%;
   border-radius: 1rem;
 }
 
-.login-form__form {
+.reg-form__form {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 100px;
 }
 
-.login-form__inputs {
+.reg-form__inputs {
   display: flex;
   flex-direction: column;
   gap: 20px;

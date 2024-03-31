@@ -9,5 +9,9 @@ export interface TPrivateRoute {
 export const PrivateRoute: FC<TPrivateRoute> = ({ children }) => {
   const { isAuthenticated } = useAuthContext();
 
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>;
+  }
+
   return isAuthenticated ? children : <Navigate to="/login" />;
 };

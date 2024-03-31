@@ -1,7 +1,7 @@
 import { User } from "firebase/auth";
 
 export interface TAuthContext {
-  isAuthenticated: boolean;
+  isAuthenticated: boolean | null;
   loginWithEmailAndPassword: (email: string, password: string) => Promise<void>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   user?: User | null;

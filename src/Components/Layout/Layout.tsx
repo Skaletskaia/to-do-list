@@ -11,7 +11,7 @@ export const Layout = () => {
         <header className="header">
           <div className="btn-container">
             <button onClick={() => logOut()} className="btn">
-              выйти
+              Выйти
             </button>
           </div>
         </header>

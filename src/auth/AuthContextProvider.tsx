@@ -17,7 +17,7 @@ import {
 } from "firebase/auth";
 
 interface AuthContextType {
-  isAuthenticated: boolean;
+  isAuthenticated: boolean | null;
   loginWithEmailAndPassword: (email: string, password: string) => Promise<void>;
   createUser: (email: string, password: string) => Promise<void>;
   user?: User | null;
@@ -25,7 +25,7 @@ interface AuthContextType {
 }
 
 export const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
+  isAuthenticated: null,
   loginWithEmailAndPassword: async () =>
     Promise.reject("Function not implemented."),
   createUser: async () => Promise.reject("Function not implemented."),
@@ -43,7 +43,7 @@ export const AuthContextProvider: FC<AuthContextProviderProps> = ({
   children,
   firebaseApp,
 }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const auth: Auth = getAuth(firebaseApp);
 
