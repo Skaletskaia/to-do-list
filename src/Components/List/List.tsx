@@ -21,7 +21,9 @@ export const List = () => {
   });
   const [taskId, setTaskId] = React.useState<string>(""); // ID выбранной задачи
   const { user } = useAuthContext();
-  const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
+  const [taskTimers, setTaskTimers] = React.useState<{
+    [taskId: string]: NodeJS.Timeout;
+  }>({});
 
   React.useEffect(() => {
     if (user) {
@@ -65,27 +67,27 @@ export const List = () => {
     setTaskForm(true);
   };
 
-  // removeTimer
-  const removeTimer = () => {
-    if (timer) {
-      clearTimeout(timer);
-    }
-  };
-
   // задача выполнена - удаляем через 2 сек, если убрать галку - не удаляем
   const doneTask = (event: ChangeEvent<HTMLInputElement>, idTask: string) => {
-    if (event.target.checked) {
-      event.target.value = "on";
+    const isChecked = event.target.checked;
 
-      setTimer(
-        setTimeout(() => {
-          removeTask(idTask);
-        }, 2000),
-      );
-    } else {
-      event.target.value = "off";
+    const existingTimer = taskTimers[idTask];
+    if (existingTimer) {
+      clearTimeout(existingTimer);
+      const newTimers = { ...taskTimers };
+      delete newTimers[idTask];
+      setTaskTimers(newTimers);
+    }
 
-      removeTimer();
+    if (isChecked) {
+      const timer = setTimeout(() => {
+        removeTask(idTask);
+        const newTimers = { ...taskTimers };
+        delete newTimers[idTask];
+        setTaskTimers(newTimers);
+      }, 2000);
+
+      setTaskTimers({ ...taskTimers, [idTask]: timer });
     }
   };
 

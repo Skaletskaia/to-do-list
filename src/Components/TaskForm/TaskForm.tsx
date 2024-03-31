@@ -86,7 +86,7 @@ export const TaskForm: FC<ITaskForm> = ({
 
     // дата из прошлого
     if (currentDateCheck(inputValues.date)) {
-      newErrors.date.push("Нельяза выбирать дату из прошлого");
+      newErrors.date.push("Нельзя выбирать дату из прошлого");
       formIsValid = false;
     }
 

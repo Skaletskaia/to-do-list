@@ -67,13 +67,13 @@ export const LoginForm: FC<TLoginForm> = ({
           </div>
           <div className="login-form__btns">
             <button type="submit" className="btn btn-add btn-log">
-              войти
+              Войти
             </button>
             <button
               onClick={() => navigate("/reg")}
               className="btn btn-add btn-log"
             >
-              регистрация
+              Регистрация
             </button>
           </div>
         </form>

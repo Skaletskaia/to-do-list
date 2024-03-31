@@ -66,9 +66,6 @@ export const addTask = async (data: {
     const db = getFirestore();
     const newDate = updDateFirestore(data.date);
 
-    console.log("новая дата", newDate);
-    console.log("создание новой задачи");
-
     const docRef = await addDoc(collection(db, myCollection), {
       task: data.task,
       date: newDate,
@@ -86,7 +83,6 @@ export const deleteTask = async (id: string) => {
   const db = getFirestore();
   try {
     await deleteDoc(doc(db, myCollection, id));
-    console.log("запись удалена");
   } catch (error) {
     console.error(error);
     throw new Error("Failed to remove task");
@@ -103,7 +99,6 @@ export const getTask = async (id: string): Promise<IList | undefined> => {
       const data = docSnap.data();
       return { id: docSnap.id, ...data } as IList;
     } else {
-      console.log("No such document!");
       return undefined;
     }
   } catch (error) {
@@ -124,8 +119,6 @@ export const updTask = async (
       task: data.task,
       date: updDateFirestore(data.date),
     });
-
-    console.log("обновили данные задачи");
   } catch (error) {
     console.error(error);
   }

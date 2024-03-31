@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import "./RegForm.css";
+import { useNavigate } from "react-router-dom";
 
 export interface TRegForm {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -17,6 +18,8 @@ export const RegForm: FC<TRegForm> = ({
   onChangeInput,
   errorsInput,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <React.Fragment>
       <div className="login-form">
@@ -81,6 +84,14 @@ export const RegForm: FC<TRegForm> = ({
             ) : null}
           </div>
           <div className="login-form__btns">
+            <button
+              onClick={() => {
+                navigate("/login");
+              }}
+              className="btn btn-add"
+            >
+              Уже есть аккаунт
+            </button>
             <button type="submit" className="btn btn-add">
               Зарегистрироваться
             </button>
